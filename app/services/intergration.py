@@ -1,7 +1,6 @@
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from twilio.rest import Client
 from app.utils.config import GMAIL_APP_PASSWORD
 
 async def send_email_gmail(receiver_email: str, subject: str, body: str):
