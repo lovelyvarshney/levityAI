@@ -59,7 +59,7 @@ async def get_route_delay(origin: str, destination: str, mock_response: bool = F
 
         normal_duration = element.get("duration", {}).get("value", 0) // 60
         current_duration = element.get("duration_in_traffic", {}).get("value", normal_duration * 60) // 60
-        delay = current_duration - normal_duration
+        delay = (current_duration - normal_duration) if (current_duration - normal_duration) > 0 else 0
 
         return {
             "origin": origin,
