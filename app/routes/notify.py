@@ -23,7 +23,7 @@ async def notify_customer(payload: NotifyRequest):
     delay = traffic_data["delay"]
 
     max_delay_allowed = data.get("custom_max_delay_allowed") or 30
-    print("max_delay_allowed" , max_delay_allowed)
+    
     if delay <= max_delay_allowed:
         return {
             "status": "no_delay",
@@ -31,14 +31,17 @@ async def notify_customer(payload: NotifyRequest):
         }
 
     channels = data.get("channels", {"notification" : True})
-    print("channels ", channels)
+
     ai_message = generate_delay_messages(delay, channels)
-    print("ai_message ::: ", ai_message)
+
     channel_score = evaluate_message(ai_message)
-    print("channel_score ", channel_score)
+
 
     _response =  build_customer_messages(channels, channel_score, ai_message, data, delay)
 
     _email_data = _response.get("customer_messages", {}).get("email")
-    await send_email_gmail(data.get("channels").get("email", None) , _email_data.get("subject"), _response.get("body"))
+    if data.get("channels", {}).get("email"):
+        email_response = await send_email_gmail(data.get("channels").get("email", None) , _email_data.get("subject"), _email_data.get("body"))
+        print("email_response ", email_response)
+
     return _response
